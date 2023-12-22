@@ -1,31 +1,40 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Chat</title>
-    </head>
-    <body>
-        <h1>WebSocket Chat</h1>
-        <form action="" onsubmit="sendMessage(event)">
-            <input type="text" id="messageText" autocomplete="off"/>
-            <button>Send</button>
-        </form>
-        <ul id='messages'>
-        </ul>
-        <script>
-            var ws = new WebSocket("ws://fastapi-crud-websocket.onrender.com:10000/ws");
-            ws.onmessage = function(event) {
-                var messages = document.getElementById('messages')
-                var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
-                message.appendChild(content)
-                messages.appendChild(message)
-            };
-            function sendMessage(event) {
-                var input = document.getElementById("messageText")
-                ws.send(input.value)
-                input.value = ''
-                event.preventDefault()
-            }
-        </script>
-    </body>
+
+<head>
+	<title>Chat</title>
+</head>
+
+<body>
+	<div class="flex flex-col items-center">
+		<h1>Chat</h1>
+		<form action="" onsubmit="sendMessage(event)">
+			<input type="text" id="messageText" autocomplete="off" />
+			<button>Send</button>
+		</form>
+		<ul id='messages'> </ul>
+	</div>
+	<script>
+
+	function appendMessage(msg) {
+		let messages = document.getElementById('messages')
+		let message = document.createElement('li')
+		let content = document.createTextNode(msg)
+		message.appendChild(content)
+		messages.appendChild(message)
+	}
+	let ws = new WebSocket(`{{ ws_protocol }}://{{ server_urn }}/ws`);
+	ws.onmessage = function(event) {
+		appendMessage(event.data)
+	};
+
+	function sendMessage(event) {
+		let input = document.getElementById("messageText")
+		ws.send(input.value)
+		input.value = ''
+		event.preventDefault()
+	}
+	</script>
+</body>
+
 </html>

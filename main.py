@@ -107,7 +107,14 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/chat")
 async def get(request: Request):
-    return templates.TemplateResponse("chat.html", {"request": request})
+    http_protocol = request.headers.get("x-forwarded-proto", "http")
+    ws_protocol = "wss" if http_protocol == "https" else "ws"
+    server_urn = request.url.netloc
+    return templates.TemplateResponse("chat.html",
+                                      {"request": request,
+                                       "http_protocol": http_protocol,
+                                       "ws_protocol": ws_protocol,
+                                       "server_urn": server_urn})
 
 
 @app.websocket("/ws")
